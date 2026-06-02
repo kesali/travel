@@ -1,4 +1,4 @@
-# About Me (Susan)
+# About Me
 I don't have computer science education or work experience as software developer.
 Currently I'm learning Python
 

@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <img src="{{ trip.hero }}" alt="{{ trip.city }}, {{ trip.country }}"
+         class="w-full h-72 object-cover rounded-xl bg-slate-100 mb-6">
+
+    <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm font-semibold">
+            {{ trip.author[0] }}
+        </div>
+        <div class="flex-1">
+            <p class="text-sm font-medium text-slate-800">{{ trip.author }}</p>
+            <p class="text-xs text-slate-500">{{ trip.posted_at }}</p>
+        </div>
+        {% if trip.kind == "featured" %}
+            <span class="bg-indigo-100 text-indigo-700 text-xs font-medium px-2 py-0.5 rounded-full">Featured</span>
+        {% elif trip.visibility == "private" %}
+            <span class="bg-amber-100 text-amber-700 text-xs font-medium px-2 py-0.5 rounded-full">Private</span>
+        {% else %}
+            <span class="bg-slate-100 text-slate-600 text-xs font-medium px-2 py-0.5 rounded-full">Public</span>
+        {% endif %}
+    </div>
+
+    <h2 class="text-3xl font-semibold">{{ trip.title }}</h2>
+    <p class="text-slate-500 mt-1 mb-4">{{ trip.city }}, {{ trip.country }}</p>
+
+    {% if trip.tags %}
+        <div class="flex flex-wrap gap-2 mb-6">
+            {% for tag in trip.tags %}
+                <span class="bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded-full">#{{ tag }}</span>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="bg-white border border-slate-200 rounded-xl p-6 mb-6">
+        <p class="text-slate-700">{{ trip.summary }}</p>
+    </section>
+
+    {% if trip.gallery %}
+        <section class="mb-6">
+            <h3 class="text-lg font-semibold mb-3">Photos</h3>
+            <div class="grid grid-cols-2 gap-3">
+                {% for photo in trip.gallery %}
+                    <img src="{{ photo }}" alt="Photo of {{ trip.city }}"
+                         class="w-full h-40 object-cover rounded-lg bg-slate-100">
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    {% if trip.kind == "featured" %}
+        <section class="grid grid-cols-2 gap-3 mb-6">
+            <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <p class="text-xs uppercase text-slate-500 font-semibold">Best time to visit</p>
+                <p class="text-sm text-slate-800 mt-1">{{ trip.best_season }}</p>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-lg p-4">
+                <p class="text-xs uppercase text-slate-500 font-semibold">Typical daily budget</p>
+                <p class="text-sm text-slate-800 mt-1">{{ trip.daily_budget }} per day</p>
+            </div>
+        </section>
+
+        <section class="bg-white border border-slate-200 rounded-xl p-6 mb-6">
+            <h3 class="text-lg font-semibold mb-3">Things to see and do</h3>
+            <ul class="space-y-2">
+                {% for item in trip.highlights %}
+                    <li class="text-slate-700">&bull; {{ item }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+    {% endif %}
+
+    <section class="bg-white border border-slate-200 rounded-xl p-4 mb-6 flex items-center gap-2">
+        <button type="button"
+                class="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm text-slate-700 hover:bg-slate-100">
+            <span>&hearts;</span>
+            <span>Like</span>
+            <span class="text-slate-400">({{ trip.likes }})</span>
+        </button>
+        <button type="button"
+                class="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm text-slate-700 hover:bg-slate-100">
+            <span>&#9734;</span>
+            <span>Save</span>
+        </button>
+        <button type="button"
+                class="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm text-slate-700 hover:bg-slate-100">
+            <span>&#8599;</span>
+            <span>Share</span>
+        </button>
+    </section>
+
+    <section class="bg-white border border-slate-200 rounded-xl p-6 mb-6">
+        <h3 class="text-lg font-semibold mb-4">
+            Comments
+            <span class="text-sm text-slate-500 font-normal">({{ trip.comments|length }})</span>
+        </h3>
+
+        {% if trip.comments %}
+            <ul class="space-y-4">
+                {% for c in trip.comments %}
+                    <li class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-semibold flex-shrink-0">
+                            {{ c.author[0] }}
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm">
+                                <span class="font-medium text-slate-800">{{ c.author }}</span>
+                                <span class="text-slate-400 text-xs ml-1">{{ c.posted_at }}</span>
+                            </p>
+                            <p class="text-sm text-slate-700 mt-1">{{ c.body }}</p>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-sm text-slate-500">No comments yet.</p>
+        {% endif %}
+
+        {% if current_user %}
+            <form class="mt-6 flex gap-2" onsubmit="event.preventDefault(); alert('Comment posting comes in a later lesson.');">
+                <input type="text" placeholder="Write a comment..."
+                       class="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                <button type="submit"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-3 py-2 rounded-md">
+                    Post
+                </button>
+            </form>
+        {% else %}
+            <p class="text-sm text-slate-500 mt-4">
+                <a href="{{ url_for('auth.login_form') }}" class="text-indigo-700 hover:underline">Sign in</a> to leave a comment.
+            </p>
+        {% endif %}
+    </section>
+
+    <p>
+        <a href="{{ url_for('feed.index') }}" class="text-sm text-slate-500 hover:text-indigo-700">
+            &larr; Back to feed
+        </a>
+    </p>
+{% endblock %}

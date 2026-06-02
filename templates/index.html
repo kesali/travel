@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <section class="mb-6">
+        <h2 class="text-3xl font-semibold">Travel feed</h2>
+        <p class="text-slate-600 mt-1">
+            Featured guides and trips shared by other travellers.
+        </p>
+    </section>
+
+    <form action="{{ url_for('feed.index') }}" method="get" class="mb-6 flex gap-2">
+        <input type="text" name="q" value="{{ query }}"
+               placeholder="Search trips, cities, people, tags..."
+               class="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+        <button type="submit"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-md">
+            Search
+        </button>
+    </form>
+
+    {% if query %}
+        <p class="text-sm text-slate-600 mb-4">
+            Showing results for &ldquo;<span class="font-medium text-slate-800">{{ query }}</span>&rdquo;.
+            <a href="{{ url_for('feed.index') }}" class="text-indigo-700 hover:underline">Clear</a>
+        </p>
+    {% endif %}
+
+    {% if trips %}
+        <div class="space-y-5">
+            {% for trip in trips %}
+                <article class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                    <a href="{{ url_for('feed.trip_detail', trip_id=trip.id) }}" class="block hover:opacity-95">
+                        <img src="{{ trip.image }}" alt="{{ trip.city }}, {{ trip.country }}"
+                             class="w-full h-56 object-cover bg-slate-100">
+                    </a>
+
+                    <div class="p-5">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm font-semibold">
+                                {{ trip.author[0] }}
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-slate-800">{{ trip.author }}</p>
+                                <p class="text-xs text-slate-500">{{ trip.posted_at }}</p>
+                            </div>
+                            {% if trip.kind == "featured" %}
+                                <span class="bg-indigo-100 text-indigo-700 text-xs font-medium px-2 py-0.5 rounded-full">Featured</span>
+                            {% elif trip.visibility == "private" %}
+                                <span class="bg-amber-100 text-amber-700 text-xs font-medium px-2 py-0.5 rounded-full">Private</span>
+                            {% else %}
+                                <span class="bg-slate-100 text-slate-600 text-xs font-medium px-2 py-0.5 rounded-full">Public</span>
+                            {% endif %}
+                        </div>
+
+                        <a href="{{ url_for('feed.trip_detail', trip_id=trip.id) }}" class="block hover:text-indigo-700">
+                            <h3 class="text-lg font-semibold">{{ trip.title }}</h3>
+                            <p class="text-sm text-slate-500 mt-0.5">{{ trip.city }}, {{ trip.country }}</p>
+                        </a>
+
+                        <p class="text-slate-700 mt-3">{{ trip.summary }}</p>
+
+                        {% if trip.tags %}
+                            <div class="flex flex-wrap gap-2 mt-3">
+                                {% for tag in trip.tags %}
+                                    <span class="bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded-full">#{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="flex items-center gap-4 text-xs text-slate-500 mt-4 pt-3 border-t border-slate-100">
+                            <span>&hearts; {{ trip.likes }} likes</span>
+                            <span>&#9993; {{ trip.comments|length }} comments</span>
+                            <a href="{{ url_for('feed.trip_detail', trip_id=trip.id) }}"
+                               class="ml-auto text-indigo-700 hover:underline">Read more &rarr;</a>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-slate-600">
+            No trips match that search.
+            {% if query %}
+                <a href="{{ url_for('feed.index') }}" class="text-indigo-700 hover:underline">Show everything</a>.
+            {% endif %}
+        </p>
+    {% endif %}
+{% endblock %}

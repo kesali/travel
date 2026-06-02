@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <section class="mb-6">
+        <h2 class="text-3xl font-semibold">{{ user_name }}'s logbook</h2>
+        <p class="text-slate-600 mt-1">Saved trips and your own posts in one place.</p>
+    </section>
+
+    <div class="flex gap-2 border-b border-slate-200 mb-6">
+        {% if tab == "wishlist" %}
+            <a href="{{ url_for('logbook.logbook', tab='wishlist') }}"
+               class="px-4 py-2 text-sm font-medium text-indigo-700 border-b-2 border-indigo-600 -mb-px">
+                Wishlist ({{ wishlist|length }})
+            </a>
+        {% else %}
+            <a href="{{ url_for('logbook.logbook', tab='wishlist') }}"
+               class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-indigo-700">
+                Wishlist ({{ wishlist|length }})
+            </a>
+        {% endif %}
+
+        {% if tab == "journal" %}
+            <a href="{{ url_for('logbook.logbook', tab='journal') }}"
+               class="px-4 py-2 text-sm font-medium text-indigo-700 border-b-2 border-indigo-600 -mb-px">
+                Journal ({{ journal|length }})
+            </a>
+        {% else %}
+            <a href="{{ url_for('logbook.logbook', tab='journal') }}"
+               class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-indigo-700">
+                Journal ({{ journal|length }})
+            </a>
+        {% endif %}
+    </div>
+
+    {% if tab == "wishlist" %}
+        {% set items = wishlist %}
+        {% set empty_msg = "Nothing saved yet. Find something interesting on the feed." %}
+    {% else %}
+        {% set items = journal %}
+        {% set empty_msg = "You have not posted anything yet." %}
+    {% endif %}
+
+    {% if items %}
+        <div class="space-y-4">
+            {% for trip in items %}
+                <a href="{{ url_for('feed.trip_detail', trip_id=trip.id) }}"
+                   class="flex bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-indigo-400">
+                    <img src="{{ trip.image }}" alt="{{ trip.city }}, {{ trip.country }}"
+                         class="w-40 h-32 object-cover bg-slate-100 flex-shrink-0">
+                    <div class="p-4 flex-1">
+                        <div class="flex items-center gap-2 text-xs text-slate-500 mb-1">
+                            <span class="font-medium text-slate-700">{{ trip.author }}</span>
+                            {% if trip.visibility == "private" %}
+                                <span class="bg-amber-100 text-amber-700 font-medium px-2 py-0.5 rounded-full">Private</span>
+                            {% endif %}
+                        </div>
+                        <h3 class="text-base font-semibold">{{ trip.title }}</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">{{ trip.city }}, {{ trip.country }}</p>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-slate-600">{{ empty_msg }}</p>
+    {% endif %}
+{% endblock %}

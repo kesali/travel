@@ -29,3 +29,5 @@ class Trip:
     highlights: list[str] | None = None
     best_season: str | None = None
     daily_budget: str | None = None
+
+# I'm Monica and this is a test

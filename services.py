@@ -43,3 +43,6 @@ def get_wishlist_trips(user: str) -> list[Trip]:
 
 def get_journal_trips(user: str) -> list[Trip]:
     return [t for t in TRIPS if t.author == user]
+
+
+# test commit comments

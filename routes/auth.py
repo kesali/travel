@@ -12,6 +12,10 @@ def current_user() -> str | None:
 def login_form():
     return render_template("login.html")
 
+@bp.get("/register")
+def register_form():
+    return render_template("register.html")
+
 
 @bp.post("/login")
 def login():

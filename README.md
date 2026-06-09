@@ -11,6 +11,34 @@ python app.py
 
 Then open http://127.0.0.1:5000 in your browser.
 
+## Tailwind CSS
+
+This project already uses Tailwind CSS for styling, but it uses the **Tailwind Play CDN** instead of an npm build step.
+
+The Tailwind script is loaded in [templates/base.html](c:/Users/DursunaliK/Desktop/lesson/project/travel_adviser/templates/base.html), so every template that extends `base.html` can use Tailwind utility classes immediately.
+
+```html
+<script src="https://cdn.tailwindcss.com"></script>
+```
+
+### What this means for developers
+
+- No `npm install` step is required.
+- No `tailwind.config.js` file is needed for the current setup.
+- You add styling by writing Tailwind classes directly in the Jinja templates.
+- Shared layout styles should usually go in `templates/base.html`.
+
+### When to use this setup
+
+This CDN approach is fine for a small lesson project because it is simple and keeps the project focused on Flask basics.
+
+If the app grows later, consider switching to the Tailwind CLI or a Node-based build so you can:
+
+- generate a smaller production CSS bundle,
+- customize the Tailwind theme,
+- scan templates automatically for used classes,
+- and keep styling easier to manage as the project gets larger.
+
 ## Configuration
 
 The app reads its secret key from the `FLASK_SECRET_KEY` environment variable. A `.env` file in this directory is loaded automatically by `python-dotenv` at startup, so for local development you just need:

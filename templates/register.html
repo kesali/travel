@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <section class="max-w-sm mx-auto py-10">
+        <h2 class="text-3xl font-semibold">Register in Traveling app</h2>
+        <p class="text-slate-600 mt-2">Enter your name, password.</p>
+
+        <form action="{{ url_for('auth.register_form') }}" method="post" class="mt-6 space-y-3">
+            <input type="text" name="name" required placeholder="Your name"
+                   class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <input type="password" name="password" placeholder="Password"
+                class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+            
+            <button type="submit"
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-md">
+                Register
+            </button>
+        </form>
+
+    </section>
+{% endblock %}

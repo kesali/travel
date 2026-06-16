@@ -41,6 +41,14 @@ def login():
         login_user(user)
     return redirect(url_for("logbook.logbook"))
 
+@bp.get("/registration")
+def registration_form():
+    return render_template("register.html")
+
+@bp.post("/registration")
+def registration():
+    return redirect(url_for("auth.login_form"))
+
 
 @bp.post("/logout")
 def logout():

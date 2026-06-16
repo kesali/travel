@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, JSON
@@ -11,7 +13,7 @@ class Base(DeclarativeBase):
 # Shared SQLAlchemy handle. app.py binds it to the Flask app with db.init_app().
 db = SQLAlchemy(model_class=Base)
 
-
+@dataclass
 class User(db.Model, UserMixin):
     __tablename__ = "users"
 
@@ -21,7 +23,6 @@ class User(db.Model, UserMixin):
 
     # UserMixin supplies is_authenticated / is_active / is_anonymous / get_id()
     # that Flask-Login needs, so we don't have to write them ourselves.
-
 
 class Trip(db.Model):
     __tablename__ = "trips"

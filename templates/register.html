@@ -5,7 +5,7 @@
         <h2 class="text-3xl font-semibold">Register in Traveling app</h2>
         <p class="text-slate-600 mt-2">Enter your name, password.</p>
 
-        <form action="{{ url_for('auth.register_form') }}" method="post" class="mt-6 space-y-3">
+        <form action="{{ url_for('auth.registration') }}" method="post" class="mt-6 space-y-3">
             <input type="text" name="name" required placeholder="Your name"
                    class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
             <input type="password" name="password" placeholder="Password"

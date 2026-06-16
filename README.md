@@ -61,14 +61,14 @@ A working `.env` is committed alongside this README so the project runs out of t
 ```
 travel_adviser/
   app.py            # create_app() factory; also creates tables and seeds on first run
-  models.py         # SQLAlchemy ORM models (Trip, Comment) + the db handle
+  models.py         # SQLAlchemy ORM models (User, Trip, Comment) + the db handle
   trip_data.py      # build_seed_trips() starter rows + WISHLIST_BY_USER
   services.py       # business logic: DB queries, search, visibility, seeding
   routes/           # Flask blueprints, one per feature area
     __init__.py     # (empty - just marks routes as a package)
     feed.py         # / and /trip/<id>
-    auth.py         # /login, /logout, current_user()
-    logbook.py      # /logbook
+    auth.py         # /login, /logout, LoginManager + user_loader
+    logbook.py      # /logbook (login required)
   templates/        # Jinja templates
     base.html
     index.html      # the feed
@@ -81,21 +81,31 @@ travel_adviser/
 
 ## What each layer does
 
-- **models.py** — the shape of the data, as SQLAlchemy ORM models. `Trip` and `Comment` are `db.Model` classes; each `Mapped[...]` attribute becomes a database column. A `Trip` has many `Comment`s via a relationship, so `trip.comments` is a list you can loop over in a template.
+- **models.py** — the shape of the data, as SQLAlchemy ORM models. `User`, `Trip`, and `Comment` are `db.Model` classes; each `Mapped[...]` attribute becomes a database column. A `Trip` has many `Comment`s via a relationship, so `trip.comments` is a list you can loop over in a template. `User` also inherits `UserMixin` for Flask-Login.
 - **trip_data.py** — `build_seed_trips()` returns the starter rows as ORM objects, plus `WISHLIST_BY_USER`. This is only used to fill an empty database; once seeded, the database is the source of truth.
 - **services.py** — the operations: `get_trip`, `can_view_trip`, `get_feed_trips`, `get_wishlist_trips`, `get_journal_trips`, and `seed_database`. These run SQLAlchemy queries (`db.session.get`, `select(...)`). Routes never touch the database directly; they always go through services.
 - **routes/** — Flask blueprints. Each file groups related routes. The blueprint's name prefixes endpoints, so `url_for("feed.index")` and `url_for("auth.login_form")` in templates.
-- **app.py** — the wiring. `create_app()` (the application factory pattern) loads `.env`, builds the app, reads config from the environment, binds the database with `db.init_app(app)`, registers blueprints, injects `current_user` into every template, and on first run creates the tables (`db.create_all()`) and seeds them.
+- **app.py** — the wiring. `create_app()` (the application factory pattern) loads `.env`, builds the app, reads config from the environment, binds the database with `db.init_app(app)` and Flask-Login with `login_manager.init_app(app)`, registers blueprints, and on first run creates the tables (`db.create_all()`) and seeds them. (Flask-Login adds `current_user` to templates for us, so there is no manual context processor anymore.)
 
-## Authentication in lesson 1
+## Authentication (Flask-Login)
 
-There is no real login yet. The `/login` route just stores whatever name you type into Flask's signed session cookie. In a later lesson we will add a real `users` table with passwords.
+Sessions are handled by [Flask-Login](https://flask-login.readthedocs.io/), but login is still **name-only** — there are no passwords yet. When you sign in, the app finds or creates a `User` row for that name and logs them in.
 
-The "current user" gates two things:
+The moving parts (in `routes/auth.py`):
+- `LoginManager` — the central object, bound to the app in `app.py` with `login_manager.init_app(app)`.
+- `@login_manager.user_loader` — turns the user id stored in the session back into a `User` object on each request.
+- `login_user(user)` / `logout_user()` — set and clear the session.
+- `current_user` — a proxy Flask-Login makes available everywhere, including templates. In templates we check `current_user.is_authenticated` and read `current_user.name`.
+
+The `User` model (`models.py`) inherits `UserMixin`, which supplies the `is_authenticated` / `is_active` / `is_anonymous` / `get_id()` methods Flask-Login expects, so we don't write them ourselves.
+
+The signed-in user gates two things:
 - Whose **private** trips show up in the feed (private posts are visible only to their author).
-- Access to `/logbook` — redirects to `/login` if nobody is signed in.
+- Access to `/logbook` — protected by the `@login_required` decorator, which redirects anonymous visitors to the login page.
 
-Try signing in as **`Alex`** — that account has mock wishlist and journal entries.
+Try signing in as **`Alex`** — that name has mock wishlist and journal entries.
+
+> Note: after a `@login_required` redirect, Flask-Login appends a `?next=` parameter so a real app could send you back where you were headed. Our `/login` currently ignores it and always lands on the logbook — wiring up `next` (safely, to avoid open-redirects) is a good later exercise.
 
 ## Visibility model
 
@@ -140,8 +150,9 @@ These will be wired to real routes and a database in a later lesson.
 
 ## Future lessons (planned)
 
+- Add passwords to the `User` model (hashed) so login is real, not name-only
 - Forms for posting new trips and comments that write to the database (replacing the placeholder buttons above)
-- A real `users` table with passwords, replacing name-only login
 - Move the wishlist into the database as a many-to-many relationship between users and trips
+- Honour the `?next=` parameter after login (safely)
 - AI helper to suggest trips based on preferences
 - Image uploads, real likes/saves, follow relationships

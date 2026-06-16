@@ -1,17 +1,16 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request
+from flask_login import login_required, current_user
 
 from services import get_wishlist_trips, get_journal_trips
-from routes.auth import current_user
 
 
 bp = Blueprint("logbook", __name__)
 
 
 @bp.get("/logbook")
+@login_required
 def logbook():
-    user = current_user()
-    if user is None:
-        return redirect(url_for("auth.login_form"))
+    user = current_user.name
 
     tab = request.args.get("tab", "wishlist")
     if tab not in {"wishlist", "journal"}:

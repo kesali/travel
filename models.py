@@ -1,3 +1,4 @@
+from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, JSON
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -9,6 +10,17 @@ class Base(DeclarativeBase):
 
 # Shared SQLAlchemy handle. app.py binds it to the Flask app with db.init_app().
 db = SQLAlchemy(model_class=Base)
+
+
+class User(db.Model, UserMixin):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(unique=True)
+    # No password column yet - login is name-only. That comes in a later lesson.
+
+    # UserMixin supplies is_authenticated / is_active / is_anonymous / get_id()
+    # that Flask-Login needs, so we don't have to write them ourselves.
 
 
 class Trip(db.Model):

@@ -14,11 +14,11 @@
             <nav class="flex items-center gap-5 text-sm">
                 <a href="{{ url_for('feed.index') }}" class="text-slate-600 hover:text-indigo-700">Feed</a>
 
-                {# current_user is injected by a context processor in app.py. #}
-                {% if current_user %}
+                {# current_user comes from Flask-Login; anonymous visitors are not authenticated. #}
+                {% if current_user.is_authenticated %}
                     <a href="{{ url_for('logbook.logbook') }}" class="text-slate-600 hover:text-indigo-700">Logbook</a>
                     <span class="text-slate-400">|</span>
-                    <span class="text-slate-500">Signed in as <span class="font-medium text-slate-700">{{ current_user }}</span></span>
+                    <span class="text-slate-500">Signed in as <span class="font-medium text-slate-700">{{ current_user.name }}</span></span>
                     <form action="{{ url_for('auth.logout') }}" method="post" class="inline">
                         <button type="submit" class="text-slate-500 hover:text-indigo-700">Sign out</button>
                     </form>

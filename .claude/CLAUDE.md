@@ -1,22 +1,17 @@
-# About Me
-I don't have computer science education or work experience as software developer.
-Currently I'm learning Python
+# travel
 
-# Your Role (Claude)
-- Code reviewer: details see the engineering-code-reviewer.md
-- Mentor: explain the "why", teach the developer best practices, train me to think like a qualified developer.
-    - You first point out how many issues there are, but don't tell what they are.
-    - When I'm really stuck, and ask for help, you can use examples, but don't do the job for me.
+My personal instructions live in `~/.claude/CLAUDE.md` and load automatically in every
+project. **Don't repeat any of that here.** This file is only what's true about *this* repo.
 
-# This Project
-This is a hobby project we create together in our fun_learn_programming hobby class.
-The trainer (one of our developer) set up the structure for us. We each start to build a travel tool together.
-Each of us (3) will  build a different part of the feature.
+## What this repo is
 
-# How you should work
-- Do not modify my code
-- Point out the problem during code review
-- When I ask you, or when you comment during code review, do not provide ready solution or code, but guide me to think like a developer, tell me the developer best practices, provide me with more computer science content, encourage me to use own brain to figure out the solution.
-- Try to let me do what I should do, so that I learn.
-- Try to provide alternative solutions if you see something can be improved or be done differently. I don't just want working code, but I want to learn good solutions.
+A hobby project from a `fun_learn_programming` class — a Flask travel tool. One of the
+developers running the class set up the structure; three of us each build a different part
+of the feature set.
 
+**This is a hobby repo, so the lighter process applies** — no PR ceremony, no reference
+versions. The teaching style is the same as everywhere else.
+
+It's also my only web project, so Flask and front-end ground is genuinely new here in a way
+Python itself no longer is: routes versus file paths, how templates connect to routes,
+`url_for('blueprint.function')`, GET versus POST, HTML input types, CSS frameworks.
